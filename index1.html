@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Retro LCD TV</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #111;
+            color: #fff;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .tv-container {
+            position: relative;
+            width: 600px;
+            height: 500px;
+            background: linear-gradient(45deg, #262626, #444444);
+            border: 20px solid #333;
+            border-radius: 25px;
+            overflow: hidden;
+            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.7);
+            animation: tvAnimation 2s infinite alternate;
+        }
+
+        .screen {
+            position: absolute;
+            top: 30px;
+            left: 45px;
+            width: 510px;
+            height: 420px;
+            overflow: hidden;
+            border-radius: 20px;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5);
+            animation: screenAnimation 2s infinite alternate;
+            /* Add this property to hide the screen initially */
+            display: none;
+        }
+
+        .content {
+            padding: 30px;
+            box-sizing: border-box;
+            text-align: center;
+        }
+
+        h1 {
+            margin: 0 0 20px;
+            font-size: 36px;
+            color: #fff;
+        }
+
+        p {
+            margin: 15px 0;
+            font-size: 20px;
+            color: #f0f0f0;
+        }
+
+        @keyframes tvAnimation {
+            0% {
+                transform: scale(1);
+            }
+
+            100% {
+                transform: scale(1.02);
+            }
+        }
+
+        @keyframes screenAnimation {
+            0% {
+                transform: scale(1);
+            }
+
+            100% {
+                transform: scale(1.01);
+            }
+        }
+
+        /* Add this style for the button */
+        .button {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            width: 45px;
+            height: 45px;
+            border: none;
+            border-radius: 12px;
+            background-color: #7CFC00;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            opacity: 0.65; /* Initial opacity */
+            transition: opacity 0.3s ease-in-out; /* Smooth transition on opacity */
+        }
+
+        .button:hover {
+            opacity: 1; /* Full opacity on hover */
+        }
+    </style>
+</head>
+
+<body>
+    <div class="tv-container">
+        <div class="screen" id="screen">
+            <div id="video-container">
+                <iframe id="youtube-video" width="510" height="420" frameborder="0" allowfullscreen></iframe>
+                <video id="local-video" width="510" height="420" controls style="display: none;">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+            <div class="content">
+                <h1>Welcome to Retro LCD TV</h1>
+                <p>This is your portal to the past with a touch of modern technology.</p>
+                <p>Experience the nostalgia in high definition!</p>
+            </div>
+        </div>
+        <button class="button" id="button" onclick="toggleScreen()">ON</button>
+    </div>
+    <!-- Add this script to toggle the screen on and off -->
+    <script>
+        // Get the button and screen elements by their ids
+        var button = document.getElementById("button");
+        var screen = document.getElementById("screen");
+        var youtubeVideo = document.getElementById("youtube-video");
+        var localVideo = document.getElementById("local-video");
+        var videoContainer = document.getElementById("video-container");
+
+        // Define a function to toggle the screen on and off
+        function toggleScreen() {
+            // If the screen is hidden, show it and change the button text to OFF
+            if (screen.style.display == "none") {
+                screen.style.display = "block";
+                button.innerHTML = "OFF";
+                // Check if the input is a YouTube link
+                var inputLink = prompt("Paste the YouTube video link:");
+                if (inputLink && isYouTubeLink(inputLink)) {
+                    loadYouTubeVideo(inputLink);
+                } else {
+                    // Assume it's a local video link
+                    loadLocalVideo(inputLink);
+                }
+            }
+            // Else, hide the screen, change the button text to ON, and pause the video
+            else {
+                screen.style.display = "none";
+                button.innerHTML = "ON";
+                pauseVideo();
+            }
+        }
+
+        // Function to check if a link is a YouTube link
+        function isYouTubeLink(link) {
+            return link.includes("youtube.com");
+        }
+
+        // Function to load a YouTube video
+        function loadYouTubeVideo(link) {
+            localVideo.style.display = "none";
+            youtubeVideo.style.display = "block";
+            var videoId = extractYouTubeVideoId(link);
+            var embedUrl = "https://www.youtube.com/embed/" + videoId;
+            youtubeVideo.src = embedUrl;
+        }
+
+        // Function to extract the video ID from a YouTube link
+        function extractYouTubeVideoId(link) {
+            var videoId = "";
+            var regex = /[?&]v=([^&#]*)/;
+            var match = regex.exec(link);
+            if (match && match[1]) {
+                videoId = match[1];
+            }
+            return videoId;
+        }
+
+        // Function to load a local video
+        function loadLocalVideo(link) {
+            youtubeVideo.style.display = "none";
+            localVideo.style.display = "block";
+            localVideo.src = link;
+        }
+
+        // Function to pause the video
+        function pauseVideo() {
+            youtubeVideo.src = "";
+            localVideo.pause();
+        }
+    </script>
+</body>
+
+</html>
